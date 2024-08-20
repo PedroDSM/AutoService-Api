@@ -9,10 +9,10 @@ class storeUser {
   }
   get messages () {
     return {
-      'email.required': 'You must provide a email address.',
-      'email.email': 'You must provide a valid email address.',
-      'email.unique': 'This email is already registered.',
-      'password.required': 'You must provide a password'
+      'email.required': 'Correo Electronico es Obligatorio.',
+      'email.email': 'PorFavor Introduzca un Correo Valido.',
+      'email.unique': 'Este Correo ya esta Registrado.',
+      'password.required': 'Introduce una Contraseña'
     }
   }
 }
