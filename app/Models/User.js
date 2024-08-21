@@ -52,7 +52,7 @@ class User extends Model {
 static get login(){
   return[
   'email', 
-  'password' ]
+  'password']
 }
   
 }

@@ -17,10 +17,22 @@
 const Route = use('Route')
 
 Route.group(() => {
-    Route.get('/users', 'Auth/UserController.index')
-    Route.post('/login', 'Auth/UserController.login');
-    Route.post('/registro', 'Auth/UserController.store');
-    Route.post('/logout', 'Auth/UserController.logout').middleware(['checktoken']);
-    Route.get('/roles', 'Auth/RolController.index').middleware(['auth']);
-    Route.post('/new_rol', 'Auth/RolController.create').middleware(['auth']);
-}).prefix('api/v1');
+Route.post('/login', 'Auth/UserController.login');
+Route.post('/registro', 'Auth/UserController.store');
+Route.post('/logout', 'Auth/UserController.logout').middleware(['checktoken']);
+}).prefix('api/v1/auth');
+
+Route.group(() => {
+    Route.get('/roles', 'Auth/RolController.index');
+    Route.post('/rol', 'Auth/RolController.store');
+    Route.post('/vistarol', 'Auth/RolController.VistaRol');
+}).prefix('api/v1/Roles');
+
+Route.group(() => {
+    Route.get('/users', 'Auth/UserController.index');
+}).prefix('api/v1/Usuarios');
+
+Route.group(() => {
+    Route.get('/vistas', 'Ctrls/VistaController.index');
+    Route.post('/vista', 'Ctrls/VistaController.store');
+}).prefix('api/v1/Vistas');

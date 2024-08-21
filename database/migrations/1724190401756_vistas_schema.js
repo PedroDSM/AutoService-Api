@@ -10,7 +10,7 @@ class VistasSchema extends Schema {
       table.string('nombre', 80).notNullable()
       table.string('icono', 150).notNullable()
       table.string('ruta', 150).notNullable()
-      table.string('status',50).notNullable()
+      table.string('status',50).defaultTo(true).notNullable()
       table.timestamps()
     })
   }

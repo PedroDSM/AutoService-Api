@@ -8,6 +8,14 @@ class Vista extends Model {
         return 'vistas'
     }
 
+    static get store(){
+        return [
+            'nombre',
+            'icono',
+            'ruta'
+        ]
+    }
+
     roles() {
         return this.belongsToMany('App/Models/Rol')
         .pivotTable('vistas_roles')

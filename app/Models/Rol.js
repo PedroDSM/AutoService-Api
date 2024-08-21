@@ -8,6 +8,13 @@ class Rol extends Model {
         return 'roles'
     }
 
+    static get store(){
+        return [
+            'rol_name',
+            'description'
+        ]
+    }
+    
     // Un rol puede estar asociado a muchos usuarios
     users () {
         return this.hasMany('App/Models/User', 'id', 'rol_id')

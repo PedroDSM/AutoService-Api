@@ -2,10 +2,12 @@
 
 const User = use('App/Models/User');
 const Token = use('App/Models/Token');
-const { validateAll } = use('Validator')
+const { validateAll } = use('Validator');
 
-const storeUser = use('App/Validators/storeUser')
-const validaciones = new storeUser()
+const storeUser = use('App/Validators/storeUser');
+const validaciones = new storeUser();
+const storeLogin = use('App/Validators/storeLogin');
+const validacionesLogin = new storeLogin();
 
 class UserController {
 
@@ -21,22 +23,27 @@ class UserController {
     }
     
     async login({ request, response, auth }) {
-        const userdata = request.only(User.login)
-      
-        try {
+        try{
+            const valid = await validateAll( request.only(User.login), validacionesLogin.rules, validacionesLogin.messages)
+            if(valid.fails()){
+                return response.status(401).send({message:valid.messages()})
+            }
+            const userdata = request.only(User.login)
+
             // Autenticación del usuario
-            const { token } = await auth.attempt(email, password);
+            const { token } = await auth.attempt(userdata.email, userdata.password);
 
             // Obtener el usuario con la información del token
             const user = await User.findBy('email', userdata.email);
+
             if (!user) {
                 return response.status(400).json({ mensaje: 'Usuario no encontrado' });
             }
-
             // Guarda el token en la base de datos
             await Token.create({ user_id: user.id, token, type: 'jwt' });
 
             return response.status(200).json({ token, mensaje: 'Inicio de sesión exitoso' });
+
         } catch (error) {
             console.error('Error de autenticación:', error);
             return response.status(400).json({ mensaje: 'Credenciales incorrectas' });

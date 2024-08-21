@@ -9,8 +9,8 @@ class storeRol {
   }
   get messages () {
     return {
-      'rol_name.required': 'PorFavor Agregue un Nombre al Rol.',
-      'description.required': 'PorFavor Agregue una Descripcion al Rol'
+        'rol_name.required': 'Asigna un Nombre al Rol',
+        'description.required': 'Agrega una Descripción al Rol',
     }
   }
 }
