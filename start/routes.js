@@ -25,14 +25,27 @@ Route.post('/logout', 'Auth/UserController.logout').middleware(['checktoken']);
 Route.group(() => {
     Route.get('/roles', 'Auth/RolController.index');
     Route.post('/rol', 'Auth/RolController.store');
+    Route.put('/rol/:id', 'Auth/RolController.update');
+    Route.delete('/rol/:id', 'Auth/RolController.destroy');
     Route.post('/vistarol', 'Auth/RolController.VistaRol');
 }).prefix('api/v1/Roles');
 
 Route.group(() => {
     Route.get('/users', 'Auth/UserController.index');
+    Route.put('/user/:id', 'Auth/UserController.update');
+    Route.delete('/user/:id', 'Auth/UserController.destroy');
 }).prefix('api/v1/Usuarios');
 
 Route.group(() => {
     Route.get('/vistas', 'Ctrls/VistaController.index');
     Route.post('/vista', 'Ctrls/VistaController.store');
+    Route.put('/vista/:id', 'Ctrls/VistaController.update');
+    Route.delete('/vista/:id', 'Ctrls/VistaController.destroy');
 }).prefix('api/v1/Vistas');
+
+Route.group(() => {
+    Route.get('/vehiculos', 'Ctrls/VehiculoController.index');
+    Route.post('/vehiculo', 'Ctrls/VehiculoController.store');
+    Route.put('/vehiculo/:id', 'Ctrls/VehiculoController.update');
+    Route.put('/vehiculo/status/:id', 'Ctrls/VehiculoController.ChangeStatus');
+}).prefix('api/v1/Vehiculos');

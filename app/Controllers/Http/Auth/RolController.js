@@ -23,7 +23,7 @@ class RolController {
     }
 
     async store ({ auth, request, response }){
-            const user = await auth.getUser();
+        const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Rol.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -46,10 +46,48 @@ class RolController {
 
     }
       
+    async update({ auth, params, request, response }){
+        const user = await auth.getUser();
+        const roldata = request.only(Rol.store)
+        let rol =  await Rol.find(params.id)
+        try {
+            rol.merge(roldata)
+            await rol.save()
+
+            return response.status(201).send({
+                roldata: rol,
+                message:"Rol Modificado Correctamente"
+            })
+        }catch (e) {
+            return response.status(400).send({
+                Fail:"Ha Ocurrido Un Error"
+            })
+        }
+    }
+
+    async destroy({ auth, params, response }) {
+        const user = await auth.getUser();
+        try {
+          const R =  await Rol.findOrFail(params.id)
+          let mensaje = ""
+          if(R.status){ mensaje = "Estatus Inactivo" }
+          if(!R.status){ mensaje = "Estatus Activo" }
+          R.status = !R.status 
+          await R.save()
+          return response.status(200).send({
+            rol: R,
+            mensaje:mensaje
+          })
+        }catch (e) {
+            return response.status(400).send({
+                Fail:"No Se Logro Cambiar El Estatus",
+                error: e.code
+            })
+        }
+    }
     
     async VistaRol({ auth, request, response }){
         const user = await auth.getUser();
-
         try{
             const valid = await validateAll( request.only(VistaRol.vista_rol), validacionesVistaRol.rules, validacionesVistaRol.messages)
             if(valid.fails()){

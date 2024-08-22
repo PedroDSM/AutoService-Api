@@ -68,6 +68,41 @@ class UserController {
         }
     }
 
+    async update({ params, request, response }){
+        const userdata = request.only(User.store)
+        let user =  await User.find(params.id)
+        try {
+        user.merge(userdata)
+        await user.save()
+
+        return response.status(201).send({
+            usuario: user,
+            message:"Usuario Modificado Correctamente"
+        })}catch (e) {
+            return response.status(400).send({
+                Fail:"Ha Ocurrido Un Error"
+            })}
+    }
+
+    async destroy({params, response}) {
+        try {
+          const US =  await User.findOrFail(params.id)
+          let mensaje = ""
+          if(US.status){ mensaje = "Status Inactivo" }
+          if(!US.status){ mensaje = "Status Activo" }
+          US.status = !US.status 
+          await US.save()
+          return response.status(200).send({
+            usuario: US,
+            mensaje:mensaje
+          })
+          }catch (e) {
+            return response.status(400).send({
+                Fail:"No Se Logro Cambiar El Estatus",
+                error: e.code})
+      }
+    }
+
     async logout({ request, auth, response }) {
         const token = auth.getAuthHeader();
     

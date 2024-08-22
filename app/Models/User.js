@@ -40,20 +40,27 @@ class User extends Model {
     return this.hasOne('App/Models/Rol', 'rol_id', 'id')
   }
 
+
+  vehiculo () {
+    return this.hasMany('App/Models/Vehiculo', 'propietario_id', 'id')
+  }
+
   static get store(){
     return[
-    'username', 
-    'email', 
-    'password', 
-    'status',
-    'rol_id'
-  ]
-}
-static get login(){
-  return[
-  'email', 
-  'password']
-}
+      'username', 
+      'email', 
+      'password', 
+      'status',
+      'rol_id'
+    ]
+  }
+
+  static get login(){
+    return[
+      'email', 
+      'password'
+    ]
+  }
   
 }
 

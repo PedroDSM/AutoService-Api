@@ -41,6 +41,47 @@ class VistaController {
         }
       
     }
+
+    async update({ auth, params, request, response }){
+        const user = await auth.getUser();
+        const vistadata = request.only(Vista.store)
+        let vista =  await Vista.find(params.id)
+        try {
+            vista.merge(vistadata)
+            await vista.save()
+
+            return response.status(201).send({
+                vistadata: vista,
+                message:"Vista Modificada Correctamente"
+            })
+        }catch (e) {
+            return response.status(400).send({
+                Fail:"Ha Ocurrido Un Error"
+            })
+        }
+    }
+
+    async destroy({ auth, params, response }) {
+        const user = await auth.getUser();
+        try {
+          const V =  await Vista.findOrFail(params.id)
+          let mensaje = ""
+          if(V.status){ mensaje = "Estatus Inactiva" }
+          if(!V.status){ mensaje = "Estatus Activa" }
+          V.status = !V.status 
+          await V.save()
+          return response.status(200).send({
+            vista: V,
+            mensaje:mensaje
+          })
+          }catch (e) {
+            return response.status(400).send({
+                Fail:"No Se Logro Cambiar El Estatus",
+                error: e.code
+            })
+        }
+    }
+    
 }
 
 module.exports = VistaController
