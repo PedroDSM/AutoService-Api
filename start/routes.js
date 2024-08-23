@@ -49,3 +49,30 @@ Route.group(() => {
     Route.put('/vehiculo/:id', 'Ctrls/VehiculoController.update');
     Route.put('/vehiculo/status/:id', 'Ctrls/VehiculoController.ChangeStatus');
 }).prefix('api/v1/Vehiculos');
+
+Route.group(() => {
+    Route.get('/talleres', 'Ctrls/TallerController.index');
+    Route.post('/taller', 'Ctrls/TallerController.store');
+    Route.put('/taller/:id', 'Ctrls/TallerController.update');
+    Route.delete('/taller/:id', 'Ctrls/TallerController.destroy');
+}).prefix('api/v1/Talleres');
+
+Route.group(() => {
+    Route.get('/servicios', 'Ctrls/ServicioController.index');
+    Route.post('/servicio', 'Ctrls/ServicioController.store');
+    Route.put('/servicio/:id', 'Ctrls/ServicioController.update');
+    Route.delete('/servicio/:id', 'Ctrls/ServicioController.destroy');
+}).prefix('api/v1/Servicios');
+
+Route.group(() => {
+    Route.get('/citas', 'Ctrls/CitaController.index');
+    Route.post('/cita', 'Ctrls/CitaController.store');
+    Route.put('/cita/:id', 'Ctrls/CitaController.update');
+    Route.put('/cita/status/:id', 'Ctrls/CitaController.ChangeStatus');
+}).prefix('api/v1/Citas');
+
+Route.group(() => {
+    Route.get('/kilometrajes', 'Ctrls/KilometrajeController.index');
+    Route.post('/kilometraje', 'Ctrls/KilometrajeController.store');
+    Route.put('/kilometraje/:id', 'Ctrls/KilometrajeController.update');
+}).prefix('api/v1/Kilometrajes');

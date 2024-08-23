@@ -9,7 +9,7 @@ const validaciones = new storeVehiculo();
 class VehiculoController {
 
     async index ({ auth, response }){
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         const vehicles = await Vehiculo.query()
         .with('user')
         .fetch()

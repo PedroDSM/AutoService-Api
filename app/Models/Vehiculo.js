@@ -29,16 +29,30 @@ class Vehiculo extends Model {
         
     }
 
+    static get km(){
+        return[
+            'kilometraje', 
+        ]
+    }
+
     // Enum para estados
     static get estados() {
         return {
-        ACTIVO: 1,
-        INACTIVO: 2,
-        EN_TALLER: 3,
-        ACCIDENTADO: 4,
-        PERDIDA_TOTAL: 5,
-        ROBADO: 6,
+            ACTIVO: 1,
+            INACTIVO: 2,
+            EN_TALLER: 3,
+            ACCIDENTADO: 4,
+            PERDIDA_TOTAL: 5,
+            ROBADO: 6,
         }
+    }
+
+    citas() {
+        return this.hasMany('App/Models/Cita')
+    }
+
+    km() {
+        return this.hasMany('App/Models/Kilometraje')
     }
 }
 
