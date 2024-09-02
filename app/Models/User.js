@@ -45,12 +45,15 @@ class User extends Model {
     return this.hasMany('App/Models/Vehiculo', 'propietario_id', 'id')
   }
 
+  history () {
+    return this.hasMany('App/Models/Historial')
+  }
+
   static get store(){
     return[
       'username', 
       'email', 
       'password', 
-      'status',
       'rol_id'
     ]
   }

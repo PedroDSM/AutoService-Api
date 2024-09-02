@@ -2,8 +2,9 @@
 
 const User = use('App/Models/User');
 const Token = use('App/Models/Token');
-const { validateAll } = use('Validator');
+const Historial = use('App/Models/Historial');
 
+const { validateAll } = use('Validator');
 const storeUser = use('App/Validators/storeUser');
 const validaciones = new storeUser();
 const storeLogin = use('App/Validators/storeLogin');
@@ -59,6 +60,14 @@ class UserController {
             const userdata = request.only(User.store)
             const user = await User.create(userdata)
 
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha creado el usuario con username: ${userdata.username}, email: ${userdata.email}, rol_id: ${userdata.rol_id}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
             // Devolver la respuesta
             return response.status(201).send({"mensaje":"Usuario Creado Exitosamente", "user":user})
         }catch (error) {
@@ -75,6 +84,15 @@ class UserController {
         user.merge(userdata)
         await user.save()
 
+        // Crear la descripción para el historial
+        const historialDescripcion = `Se ha actualizado el usuario con id ${params.id} con username: ${userdata.username}, email: ${userdata.email}, rol_id: ${userdata.rol_id}`
+
+        // Crear el historial
+        await Historial.create({
+        user_id: user.id,
+        descripcion: historialDescripcion
+        })
+
         return response.status(201).send({
             usuario: user,
             message:"Usuario Modificado Correctamente"
@@ -86,21 +104,32 @@ class UserController {
 
     async destroy({params, response}) {
         try {
-          const US =  await User.findOrFail(params.id)
-          let mensaje = ""
-          if(US.status){ mensaje = "Status Inactivo" }
-          if(!US.status){ mensaje = "Status Activo" }
-          US.status = !US.status 
-          await US.save()
-          return response.status(200).send({
-            usuario: US,
-            mensaje:mensaje
-          })
-          }catch (e) {
+            const US =  await User.findOrFail(params.id)
+            let mensaje = ""
+            if(US.status){ mensaje = "Status Inactivo" }
+            if(!US.status){ mensaje = "Status Activo" }
+            US.status = !US.status 
+            await US.save()
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha cambiado el estatus del usuario con id ${params.id} a: ${mensaje}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
+
+            return response.status(200).send({
+                usuario: US,
+                mensaje:mensaje
+            })
+        }catch (e) {
             return response.status(400).send({
                 Fail:"No Se Logro Cambiar El Estatus",
-                error: e.code})
-      }
+                error: e.code
+            })
+        }
     }
 
     async logout({ request, auth, response }) {

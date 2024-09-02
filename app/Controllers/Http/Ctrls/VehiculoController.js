@@ -20,7 +20,7 @@ class VehiculoController {
     }
 
     async store ({ auth, request, response }){
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Vehiculo.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -44,7 +44,7 @@ class VehiculoController {
     }
 
     async update({ auth, params, request, response }){
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         const vehicleData = request.only(Vehiculo.store)
         let vehicle =  await Vehiculo.find(params.id)
         try {
@@ -63,7 +63,7 @@ class VehiculoController {
     }
 
     async ChangeStatus({ auth, params, request, response }) {
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         try {
           // Buscar el vehículo por ID
           const vehicle = await Vehiculo.findOrFail(params.id)

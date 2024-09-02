@@ -2,6 +2,7 @@
 
 const Rol = use('App/Models/Rol');
 const VistaRol = use('App/Models/VistaRol');
+const Historial = use('App/Models/Historial');
 
 const { validateAll } = use('Validator');
 
@@ -13,7 +14,7 @@ const validacionesVistaRol = new storeVistaRol();
 class RolController {
     
     async index ({ auth, response }){
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         const roles = await Rol.query()
         .with('vistas')
         .fetch()
@@ -33,6 +34,16 @@ class RolController {
             const roladata = request.only(Rol.store)
 
             await Rol.create(roladata)
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha creado el rol con los siguientes datos: rol_name: ${roladata.rol_name}, description: ${roladata.description}`;
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            });
+
             return response.status(201).send({
                 Roles: roladata,
                 message:"Rol Creado Correctamente",
@@ -49,18 +60,31 @@ class RolController {
     async update({ auth, params, request, response }){
         const user = await auth.getUser();
         const roldata = request.only(Rol.store)
-        let rol =  await Rol.find(params.id)
+        let rol = await Rol.find(params.id)
         try {
             rol.merge(roldata)
             await rol.save()
+
+            
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha actualizado el rol ` + params.id + `con los siguientes datos: rol_name: ${roldata.rol_name}, description: ${roldata.description}`;
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            });
 
             return response.status(201).send({
                 roldata: rol,
                 message:"Rol Modificado Correctamente"
             })
         }catch (e) {
+            console.log(e)
             return response.status(400).send({
+
                 Fail:"Ha Ocurrido Un Error"
+
             })
         }
     }
@@ -74,6 +98,12 @@ class RolController {
           if(!R.status){ mensaje = "Estatus Activo" }
           R.status = !R.status 
           await R.save()
+
+          await Historial.create({
+            user_id: user.id,
+            descripcion: "Se ha cambiado el estatus del rol: " + params.id + " a: " + mensaje
+        });
+
           return response.status(200).send({
             rol: R,
             mensaje:mensaje
@@ -97,6 +127,12 @@ class RolController {
             const vrdata = request.only(VistaRol.vista_rol)
 
             await VistaRol.create(vrdata)
+
+            await Historial.create({
+                user_id: user.id,
+                descripcion: "Se ha creado la relacion VistaRol: " + vrdata
+            });
+
             return response.status(201).send({
                 vista_rol: vrdata,
                 message:"Vista Asignada al Rol Correctamente",
@@ -108,6 +144,30 @@ class RolController {
             })
         }
 
+    }
+
+    async updateVistaRol({ auth, params, request, response }){
+        const user = await auth.getUser();
+        const vrdata = request.only(VistaRol.vista_rol)
+        let vr = await VistaRol.find(params.id)
+        try {
+            vr.merge(vrdata)
+            await vr.save()
+
+            await Historial.create({
+                user_id: user.id,
+                descripcion: "Se ha cambiado la relacion VistaRol: " + vrdata
+            });
+
+            return response.status(201).send({
+                vrdata: vr,
+                message:"VistaRol Modificada Correctamente"
+            })
+        }catch (e) {
+            return response.status(400).send({
+                Fail:"Ha Ocurrido Un Error"
+            })
+        }
     }
 }
 

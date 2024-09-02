@@ -20,7 +20,7 @@ Route.group(() => {
 Route.post('/login', 'Auth/UserController.login');
 Route.post('/registro', 'Auth/UserController.store');
 Route.post('/logout', 'Auth/UserController.logout').middleware(['checktoken']);
-}).prefix('api/v1/auth');
+}).prefix('api/v1/Auth');
 
 Route.group(() => {
     Route.get('/roles', 'Auth/RolController.index');
@@ -28,6 +28,7 @@ Route.group(() => {
     Route.put('/rol/:id', 'Auth/RolController.update');
     Route.delete('/rol/:id', 'Auth/RolController.destroy');
     Route.post('/vistarol', 'Auth/RolController.VistaRol');
+    Route.put('/vistarol/:id', 'Auth/RolController.updateVistaRol');
 }).prefix('api/v1/Roles');
 
 Route.group(() => {
@@ -76,3 +77,7 @@ Route.group(() => {
     Route.post('/kilometraje', 'Ctrls/KilometrajeController.store');
     Route.put('/kilometraje/:id', 'Ctrls/KilometrajeController.update');
 }).prefix('api/v1/Kilometrajes');
+
+Route.group(() => {
+    Route.get('/historiales', 'Ctrls/HistorialController.index');
+}).prefix('api/v1/Historiales');
