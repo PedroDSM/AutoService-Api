@@ -23,7 +23,7 @@ class Vehiculo extends Model {
             'numero_serie',
             'tipo_vehiculo', 
             'kilometraje', 
-            'transmision',  // Estado del vehículo (activo, inactivo, etc.)  // created_at y updated_at  // created_at y updated_at  // created_at y updated_at  // created_at y updated_at  // created_at y updated_at  // created_at y updated_at  // created_at y updated
+            'transmision',
             'propietario_id'
         ]
         

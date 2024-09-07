@@ -5,7 +5,7 @@ const Historial = use('App/Models/Historial');
 class HistorialController {
 
     async index ({ auth, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const history = await Historial.query()
         .with('users')
         .fetch()

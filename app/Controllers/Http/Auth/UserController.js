@@ -60,14 +60,6 @@ class UserController {
             const userdata = request.only(User.store)
             const user = await User.create(userdata)
 
-            // Crear la descripción para el historial
-            const historialDescripcion = `Se ha creado el usuario con username: ${userdata.username}, email: ${userdata.email}, rol_id: ${userdata.rol_id}`
-
-            // Crear el historial
-            await Historial.create({
-                user_id: user.id,
-                descripcion: historialDescripcion
-            })
             // Devolver la respuesta
             return response.status(201).send({"mensaje":"Usuario Creado Exitosamente", "user":user})
         }catch (error) {
@@ -77,7 +69,8 @@ class UserController {
         }
     }
 
-    async update({ params, request, response }){
+    async update({ params, request, response, auth }){
+        const users = await auth.getUser();
         const userdata = request.only(User.store)
         let user =  await User.find(params.id)
         try {
@@ -89,7 +82,7 @@ class UserController {
 
         // Crear el historial
         await Historial.create({
-        user_id: user.id,
+        user_id: users.id,
         descripcion: historialDescripcion
         })
 
@@ -102,7 +95,8 @@ class UserController {
             })}
     }
 
-    async destroy({params, response}) {
+    async destroy({params, response, auth}) {
+        const user = await auth.getUser();
         try {
             const US =  await User.findOrFail(params.id)
             let mensaje = ""

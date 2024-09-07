@@ -10,7 +10,7 @@ const validaciones = new storeServicios()
 class ServicioController {
 
     async index ({ auth, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const servicios = await Servicio.all()
         return response.status(200).send({
             servicios: servicios,

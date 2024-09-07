@@ -6,11 +6,12 @@ const { validateAll } = use('Validator')
 
 const storeKilometrajes = use('App/Validators/storeKilometrajes')
 const validaciones = new storeKilometrajes()
+const Historial = use('App/Models/Historial');
 
 class KilometrajeController {
 
     async index ({ auth, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const km = await Kilometraje.query()
         .with('vehiculos')
         .fetch()
@@ -21,7 +22,7 @@ class KilometrajeController {
     }
 
     async store ({ auth, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Kilometraje.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -31,6 +32,15 @@ class KilometrajeController {
             const kmData = request.only(Kilometraje.store)
 
             await Kilometraje.create(kmData)
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha creado el kilometraje con vehiculo_id: ${kmData.vehiculo_id}, kilometraje: ${kmData.kilometraje}, km_recorridos: ${kmData.km_recorridos}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
 
             let vehicle = await Vehiculo.findOrFail(kmData.vehiculo_id)
             
@@ -54,12 +64,21 @@ class KilometrajeController {
     }
 
     async update({ auth, params, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const kmData = request.only(Kilometraje.store)
         let km =  await Kilometraje.find(params.id)
         try {
             km.merge(kmData)
             await km.save()
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha actualizado el kilometraje con el id ${params.id} vehiculo_id: ${kmData.vehiculo_id}, kilometraje: ${kmData.kilometraje}, km_recorridos: ${kmData.km_recorridos}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
 
             return response.status(201).send({
                 km: km,

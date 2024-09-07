@@ -24,7 +24,7 @@ class RolController {
     }
 
     async store ({ auth, request, response }){
-        const user = await auth.getUser();
+        //const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Rol.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -40,7 +40,7 @@ class RolController {
 
             // Crear el historial
             await Historial.create({
-                user_id: user.id,
+                user_id: null,
                 descripcion: historialDescripcion
             });
 
@@ -128,10 +128,14 @@ class RolController {
 
             await VistaRol.create(vrdata)
 
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha creado la relacion VistaRol con rol_id: ${vrdata.rol_id}, vista_id: ${vrdata.vista_id}`
+
+            // Crear el historial
             await Historial.create({
                 user_id: user.id,
-                descripcion: "Se ha creado la relacion VistaRol: " + vrdata
-            });
+                descripcion: historialDescripcion
+            })
 
             return response.status(201).send({
                 vista_rol: vrdata,
@@ -154,10 +158,14 @@ class RolController {
             vr.merge(vrdata)
             await vr.save()
 
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha actualizado la relacion VistaRol con rol_id: ${vrdata.rol_id}, vista_id: ${vrdata.vista_id}`
+
+            // Crear el historial
             await Historial.create({
                 user_id: user.id,
-                descripcion: "Se ha cambiado la relacion VistaRol: " + vrdata
-            });
+                descripcion: historialDescripcion
+            })
 
             return response.status(201).send({
                 vrdata: vr,

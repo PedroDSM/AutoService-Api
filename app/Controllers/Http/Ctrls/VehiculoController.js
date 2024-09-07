@@ -5,11 +5,12 @@ const { validateAll } = use('Validator');
 
 const storeVehiculo = use('App/Validators/storeVehiculo');
 const validaciones = new storeVehiculo();
+const Historial = use('App/Models/Historial');
 
 class VehiculoController {
 
     async index ({ auth, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const vehicles = await Vehiculo.query()
         .with('user')
         .fetch()
@@ -20,7 +21,7 @@ class VehiculoController {
     }
 
     async store ({ auth, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Vehiculo.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -30,6 +31,16 @@ class VehiculoController {
             const vehicleData = request.only(Vehiculo.store)
 
             await Vehiculo.create(vehicleData)
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha creado el vehiculo con la marca: ${vehicleData.marca}, modelo: ${vehicleData.modelo}, anio: ${vehicleData.anio}, color: ${vehicleData.color}, numero_placa: ${vehicleData.numero_placa}, numero_serie: ${vehicleData.numero_serie}, tipo_vehiculo: ${vehicleData.tipo_vehiculo}, kilometraje: ${vehicleData.kilometraje}, transmision: ${vehicleData.transmision}, propietario_id: ${vehicleData.propietario_id}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
+
             return response.status(201).send({
                 Vehiculo: vehicleData,
                 message:"Vehiculo Creado Correctamente",
@@ -44,12 +55,21 @@ class VehiculoController {
     }
 
     async update({ auth, params, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const vehicleData = request.only(Vehiculo.store)
         let vehicle =  await Vehiculo.find(params.id)
         try {
             vehicle.merge(vehicleData)
             await vehicle.save()
+
+            // Crear la descripción para el historial
+            const historialDescripcion = `Se ha actualizado el vehiculo con id ${params.id} con la marca: ${vehicleData.marca}, modelo: ${vehicleData.modelo}, anio: ${vehicleData.anio}, color: ${vehicleData.color}, numero_placa: ${vehicleData.numero_placa}, numero_serie: ${vehicleData.numero_serie}, tipo_vehiculo: ${vehicleData.tipo_vehiculo}, kilometraje: ${vehicleData.kilometraje}, transmision: ${vehicleData.transmision}, propietario_id: ${vehicleData.propietario_id}`
+
+            // Crear el historial
+            await Historial.create({
+                user_id: user.id,
+                descripcion: historialDescripcion
+            })
 
             return response.status(201).send({
                 vehiculo: vehicle,
@@ -63,7 +83,7 @@ class VehiculoController {
     }
 
     async ChangeStatus({ auth, params, request, response }) {
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         try {
           // Buscar el vehículo por ID
           const vehicle = await Vehiculo.findOrFail(params.id)
@@ -108,6 +128,15 @@ class VehiculoController {
           // Guardar cambios en la base de datos
           await vehicle.save()
       
+          // Crear la descripción para el historial
+          const historialDescripcion = `Se ha cambiado el estatus del vehiculo con id ${params.id} a: ${mensajeEstado}`
+
+          // Crear el historial
+          await Historial.create({
+              user_id: user.id,
+              descripcion: historialDescripcion
+          })
+
           return response.status(200).send({
             vehiculo: vehicle,
             message: mensajeEstado

@@ -20,7 +20,7 @@ class VistaController {
     }
 
     async store ({ auth, request, response}){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         try{
             const valid = await validateAll( request.only(Vista.store), validaciones.rules, validaciones.messages)
             if(valid.fails()){
@@ -54,7 +54,7 @@ class VistaController {
     }
 
     async update({ auth, params, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const vistadata = request.only(Vista.store)
         let vista =  await Vista.find(params.id)
         try {
@@ -83,7 +83,7 @@ class VistaController {
     }
 
     async destroy({ auth, params, response }) {
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         try {
           const V =  await Vista.findOrFail(params.id)
           let mensaje = ""

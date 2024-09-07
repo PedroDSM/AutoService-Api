@@ -10,7 +10,7 @@ const Historial = use('App/Models/Historial');
 class TallerController {
 
     async index ({ auth, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const talleres = await Taller.all()
         return response.status(200).send({
             talleres: talleres,
@@ -52,7 +52,7 @@ class TallerController {
     }
 
     async update({ auth, params, request, response }){
-        //const user = await auth.getUser();
+        const user = await auth.getUser();
         const tallerdata = request.only(Taller.store)
         let taller =  await Taller.find(params.id)
         try {
